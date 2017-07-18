@@ -9,6 +9,8 @@ enablePlugins(GitBranchPrompt)
 
 enablePlugins(DockerPlugin)
 
+enablePlugins(ScalaJSPlugin, WorkbenchPlugin)
+
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
@@ -17,12 +19,14 @@ lazy val root = (project in file(".")).
     )),
     name := "todo",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http"         % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-xml"     % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-stream"       % akkaVersion,
-      "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
-      "org.scalatest"     %% "scalatest"         % "3.0.1"         % Test
+      "org.scala-js"      %%% "scalajs-dom"             % "0.9.1",
+      "jp.co.bizreach"    %% "elastic-scala-httpclient" % "2.0.6",
+      "com.typesafe.akka" %% "akka-http"                % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-http-xml"            % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-http-spray-json"     % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-stream"              % akkaVersion,
+      "com.typesafe.akka" %% "akka-http-testkit"        % akkaHttpVersion % Test,
+      "org.scalatest"     %% "scalatest"                % "3.0.1"         % Test
     ),
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.ra.build"
