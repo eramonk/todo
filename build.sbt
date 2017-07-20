@@ -2,6 +2,7 @@ import ReleaseTransformations._
 
 lazy val akkaHttpVersion = "10.0.7"
 lazy val akkaVersion    = "2.5.2"
+lazy val elastic4sVersion = "5.4.0"
 
 enablePlugins(BuildInfoPlugin)
 
@@ -9,7 +10,7 @@ enablePlugins(GitBranchPrompt)
 
 enablePlugins(DockerPlugin)
 
-enablePlugins(ScalaJSPlugin, WorkbenchPlugin)
+//enablePlugins(ScalaJSPlugin, WorkbenchPlugin)
 
 lazy val root = (project in file(".")).
   settings(
@@ -19,14 +20,18 @@ lazy val root = (project in file(".")).
     )),
     name := "todo",
     libraryDependencies ++= Seq(
-      "org.scala-js"      %%% "scalajs-dom"             % "0.9.1",
-      "jp.co.bizreach"    %% "elastic-scala-httpclient" % "2.0.6",
-      "com.typesafe.akka" %% "akka-http"                % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-xml"            % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-spray-json"     % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-stream"              % akkaVersion,
-      "com.typesafe.akka" %% "akka-http-testkit"        % akkaHttpVersion % Test,
-      "org.scalatest"     %% "scalatest"                % "3.0.1"         % Test
+      "com.sksamuel.elastic4s" %% "elastic4s-core"           % elastic4sVersion,
+      "com.sksamuel.elastic4s" %% "elastic4s-circe"          % elastic4sVersion,
+      "com.sksamuel.elastic4s" %% "elastic4s-tcp"            % elastic4sVersion,
+      "com.sksamuel.elastic4s" %% "elastic4s-streams"        % elastic4sVersion,
+//      "org.scala-js"           %%% "scalajs-dom"             % "0.9.1",
+      "jp.co.bizreach"         %% "elastic-scala-httpclient" % "2.0.6",
+      "com.typesafe.akka"      %% "akka-http"                % akkaHttpVersion,
+      "com.typesafe.akka"      %% "akka-http-xml"            % akkaHttpVersion,
+      "com.typesafe.akka"      %% "akka-http-spray-json"     % akkaHttpVersion,
+      "com.typesafe.akka"      %% "akka-stream"              % akkaVersion,
+      "com.typesafe.akka"      %% "akka-http-testkit"        % akkaHttpVersion    % Test,
+      "org.scalatest"          %% "scalatest"                % "3.0.1"            % Test
     ),
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.ra.build"
