@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <!--<script src="jquery-3.2.1.js"></script>-->
+
+    <style>
+   hr {
+    border: none;
+    background-color: orange;
+    height: 2px;
+   }
+      .b1 {
+    background: red; /* Синий цвет фона */
+    color: white; /* Белые буквы */
+    font-size: 9pt; /* Размер шрифта в пунктах */
+   }
+
+
+
+
+  </style>
+</head>
+
+
+<hr>
+<div id="newlist"><button>Новый список</button></div>
+<p><b>Введите задачу:</b><br>
+<div id="Div1">
+    <input type ="text" id="aa" />
+
+</div>
+</p>
+<hr>
+<p><b>Список задач:</b><br>
+<div id="tasks">
+
+</div>
+
+
+</p>
+<hr>
+<div id="deleteall"><button>Удалить все выполненные</button></div>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    $.getJSON("http://localhost:9000/show", "id="+ $(this).attr('id'), function(json1){
+        console.log(json1);
+            <!--$('#tasks').html('');-->
+             $('#tasks').empty()
+            for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+            }
+
+});
+});
+
+
+$(function(){
+    $('#tasks').on('click', 'input', function() {
+    console.log("input")
+        if ($(this).is(':checked')) {
+
+            $.getJSON("http://localhost:9000/statuson", "id="+ $(this).attr('id'), function(json1){
+        console.log(json1);
+            <!--$('#tasks').html('');-->
+             $('#tasks').empty()
+            for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+            }
+
+        });
+
+        } else if (!$(this).is(':checked')) {
+
+            $.getJSON("http://localhost:9000/statusoff", "id="+ $(this).attr('id'), function(json1){
+        console.log(json1);
+            <!--$('#tasks').html('');-->
+            console.log("delete");
+             $('#tasks').empty()
+            for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true") {
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+            }
+
+        });
+
+        }
+        })
+        });
+
+$(function(){
+    $('#tasks').on('click', 'button', function() {
+    console.log("button")
+
+    $.getJSON("http://localhost:9000/delete", "id="+ $(this).attr('id'), function(json1){
+        console.log(json1);
+            console.log("delete");
+             $('#tasks').empty()
+             for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+             }
+
+        });
+
+
+        })
+        });
+
+
+ $(function(){
+    $('#deleteall').on('click', 'button', function() {
+    console.log("button")
+
+    $.getJSON("http://localhost:9000/deleteall", "id=1", function(json1){
+        console.log(json1);
+            <!--$('#tasks').html('');-->
+            console.log("delete");
+             $('#tasks').empty()
+             for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+             }
+
+        });
+
+
+        })
+        });
+
+$(function(){
+    $('#newlist').on('click', 'button', function() {
+    console.log("button")
+
+    $.getJSON("http://localhost:9000/newlist", "id=1", function(json1){
+        console.log(json1);
+            console.log("delete");
+             $('#tasks').empty()
+             for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+             }
+
+        });
+
+
+        })
+        });
+
+$(function(){
+ $("#Div1 input").keypress(function (e) {
+    if (e.keyCode == 13) {
+        var input = document.getElementById("aa");
+
+        console.log(input.value);
+
+        var task = "task=" + document.getElementById("aa").value
+        $.getJSON("http://localhost:9000/create", task, function(json1){
+        console.log(json1);
+        console.log("" + json1.tasks[0].status);
+            $('#tasks').html('');
+            console.log(json1.tasks[0].status);
+             $('#tasks').empty()
+             for(var i = 0; i < json1.tasks.length; ++i) {
+                if ("" + json1.tasks[i].status == "false"){
+                console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 console.log(json1.tasks[i].status)
+                 $('#tasks').append("<button class=b1 id="
+                 + json1.tasks[i].id + ">X</button>"
+                 + "<input type='checkbox' checked id="
+                 + json1.tasks[i].id + ">"
+                 + json1.tasks[i].body + "<Br>")}
+            }
+
+        });
+
+        input.value = ""
+
+    }
+
+ });
+});
+
+</script>
+
+</body>
+</html>
