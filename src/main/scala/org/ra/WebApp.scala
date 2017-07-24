@@ -31,7 +31,6 @@ object WebAction {
     }.toList)
   }
 
-
   def processAction(task: TaskAction) = task match {
 
     case CreateTaskMessage(task) =>
@@ -92,13 +91,5 @@ object WebAction {
           delete(z.id) from "todotest2" / "list" refresh RefreshPolicy.WAIT_UNTIL
         }))
         .flatMap(x => Future.sequence(x.toList))
-
-    case ShowListBrowserMessage() =>
-      val result = client.execute {
-        search("todotest2" / "list")
-      }.await
-
-      Future(showBrowser(result))
-
   }
 }

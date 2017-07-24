@@ -13,7 +13,6 @@ case class ChangeStatusTaskMessage(id: String) extends TaskAction
 case class ChangeStatusTaskOffMessage(id: String) extends TaskAction
 case class DeleteAllCompletedTasksMessage() extends TaskAction
 case class ShowListConsoleMessage() extends TaskAction
-case class ShowListBrowserMessage() extends TaskAction
 case class DeleteListMessage() extends TaskAction
 object TaskId {
   def getId: String = {
@@ -42,10 +41,8 @@ object Action {
       }.await
 
     case DeleteTaskMessage(id) =>
-
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
-
       }.await
 
       client.execute {
@@ -53,10 +50,8 @@ object Action {
       }.await
 
     case ChangeStatusTaskMessage(id) =>
-
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
-
       }.await
 
       client.execute {
@@ -66,10 +61,8 @@ object Action {
       }.await
 
     case ChangeStatusTaskOffMessage(id) =>
-
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
-
       }.await
 
       client.execute {
@@ -79,10 +72,8 @@ object Action {
       }.await
 
     case DeleteAllCompletedTasksMessage() =>
-
       val result = client.execute {
         search("todotest2").matchQuery("status", "true")
-
       }.await
 
       result.hits.map(x =>
@@ -91,10 +82,8 @@ object Action {
         }.await)
 
     case DeleteListMessage() =>
-
       val result = client.execute {
         search("todotest2")
-
       }.await
 
       result.hits.map(x =>
@@ -150,11 +139,8 @@ object Action {
       case "3" =>
         println("Введите номер задачи")
         val input = scala.io.StdIn.readLine()
-        val result = client.execute {
-          search("todotest2").matchQuery("id", input)
-        }.await
 
-        Action.processAction(DeleteTaskMessage(result.hits.head.id))
+        Action.processAction(DeleteTaskMessage(input))
 
       case "4" =>
         Action.processAction(DeleteAllCompletedTasksMessage())
