@@ -4,7 +4,6 @@ import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri, TcpClient
 import com.sksamuel.elastic4s.searches.RichSearchResponse
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy
-
 import scala.collection.mutable.ArrayOps
 import scala.concurrent.Future
 
@@ -21,22 +20,17 @@ object WebAction {
       search("todotest2" / "list")
     }.await
 
-    showBrowser(result)
-
-  }
-
-  def showBrowser(args: RichSearchResponse): TaskList = {
     TaskList({
       for {
-        x <- args.hits
+        x <- result.hits
       } yield Task(
         x.sourceField("id").toString,
         x.sourceField("body").toString,
         x.sourceField("status").toString.toBoolean
       )
     }.toList)
-
   }
+
 
   def processAction(task: TaskAction) = task match {
 
