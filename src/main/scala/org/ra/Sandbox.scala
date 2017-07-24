@@ -7,25 +7,25 @@ import org.elasticsearch.action.support.WriteRequest.RefreshPolicy
 case class Task(id: String, body: String, status: Boolean)
 case class TaskList(tasks: List[Task])
 trait TaskAction
-case class CreateTask(task: Task) extends TaskAction
-case class DeleteTask(id: String) extends TaskAction
-case class ChangeStateTask(id: String) extends TaskAction
-case class ChangeStateTaskOff(id: String) extends TaskAction
-case class DeleteAllCompletedTasks() extends TaskAction
-case class ShowListTasks() extends TaskAction
-case class ShowListFront() extends TaskAction
-case class DeleteList() extends TaskAction
+case class CreateTaskMessage(task: Task) extends TaskAction
+case class DeleteTaskMessage(id: String) extends TaskAction
+case class ChangeStatusTaskMessage(id: String) extends TaskAction
+case class ChangeStatusTaskOffMessage(id: String) extends TaskAction
+case class DeleteAllCompletedTasksMessage() extends TaskAction
+case class ShowListConsoleMessage() extends TaskAction
+case class ShowListBrowserMessage() extends TaskAction
+case class DeleteListMessage() extends TaskAction
 object TaskId {
   def getId: String = {
     (Math.random() * 10000).round.toString
   }
 }
 object ShowList {
-  def show(id: String, body: String, status: String): Unit =
+  def showConsole(id: String, body: String, status: String): Unit =
     if (status == "true") println(s"$id - $body (X)")
     else println(s"$id - $body ( )")
 
-  def showFront(args: RichSearchResponse): TaskList = {
+  def showBrowser(args: RichSearchResponse): TaskList = {
     TaskList({
       for {
         x <- args.hits
@@ -53,20 +53,20 @@ object Action {
       search("todotest2" / "list")
     }.await
 
-    ShowList.showFront(result)
+    ShowList.showBrowser(result)
 
   }
 
   def processAction(task: TaskAction): Any = task match {
 
-    case CreateTask(task) =>
+    case CreateTaskMessage(task) =>
       client.execute {
         bulk(
           indexInto("todotest2" / "list").fields("id" -> TaskId.getId, "body" -> task.body, "status" -> task.status.toString)
         ).refresh(RefreshPolicy.WAIT_UNTIL)
       }.await
 
-    case DeleteTask(id) =>
+    case DeleteTaskMessage(id) =>
 
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
@@ -77,7 +77,7 @@ object Action {
         delete(result.hits.head.id) from "todotest2" / "list"
       }.await
 
-    case ChangeStateTask(id) =>
+    case ChangeStatusTaskMessage(id) =>
 
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
@@ -90,7 +90,7 @@ object Action {
         )
       }.await
 
-    case ChangeStateTaskOff(id) =>
+    case ChangeStatusTaskOffMessage(id) =>
 
       val result = client.execute {
         search("todotest2").matchQuery("id", id)
@@ -103,7 +103,7 @@ object Action {
         )
       }.await
 
-    case DeleteAllCompletedTasks() =>
+    case DeleteAllCompletedTasksMessage() =>
 
       val result = client.execute {
         search("todotest2").matchQuery("status", "true")
@@ -115,7 +115,7 @@ object Action {
           delete(x.id) from "todotest2" / "list"
         }.await)
 
-    case DeleteList() =>
+    case DeleteListMessage() =>
 
       val result = client.execute {
         search("todotest2")
@@ -127,7 +127,7 @@ object Action {
           delete(x.id) from "todotest2" / "list"
         }.await)
 
-    case ShowListTasks() =>
+    case ShowListConsoleMessage() =>
       val result: RichSearchResponse = client.execute {
         search("todotest2" / "list")
       }.await
@@ -135,36 +135,26 @@ object Action {
       result
         .hits
         .foreach(x =>
-          ShowList.show(
+          ShowList.showConsole(
             x.sourceField("id").toString,
             x.sourceField("body").toString,
             x.sourceField("status").toString
           ))
 
-    case ShowListFront() =>
+    case ShowListBrowserMessage() =>
       val result = client.execute {
         search("todotest2" / "list")
       }.await
 
-      val b: TaskList = ShowList.showFront(result)
-      b
-
-    //      result
-    //        .hits
-    //        .map(x =>
-    //          ShowList.show(
-    //            x.sourceField("id").toString,
-    //            x.sourceField("body").toString,
-    //            x.sourceField("status").toString
-    //          ))
+      ShowList.showBrowser(result)
 
   }
 
-  def frontEnd(): Unit = {
+  def consoleMenu(): Unit = {
     println("=" * 100)
     println("Список задач")
     println("-" * 100)
-    Action.processAction(ShowListTasks())
+    Action.processAction(ShowListConsoleMessage())
     println("=" * 100)
     println("1 - Добавить задачу")
     println("2 - Изменить статус на выполнена")
@@ -176,7 +166,7 @@ object Action {
 
   def cycle(): Unit = while (true) {
     Thread.sleep(600)
-    Action.frontEnd()
+    Action.consoleMenu()
 
     val input = scala.io.StdIn.readLine()
     input match {
@@ -184,12 +174,12 @@ object Action {
         println("Введите задачу")
         val input = scala.io.StdIn.readLine()
         val task = Task(TaskId.getId, input, false)
-        Action.processAction(CreateTask(task))
+        Action.processAction(CreateTaskMessage(task))
       case "2" =>
         println("Введите номер задачи")
         val input = scala.io.StdIn.readLine()
 
-        Action.processAction(ChangeStateTask(input))
+        Action.processAction(ChangeStatusTaskMessage(input))
       case "3" =>
         println("Введите номер задачи")
         val input = scala.io.StdIn.readLine()
@@ -197,13 +187,13 @@ object Action {
           search("todotest2").matchQuery("id", input)
         }.await
 
-        Action.processAction(DeleteTask(result.hits.head.id))
+        Action.processAction(DeleteTaskMessage(result.hits.head.id))
 
       case "4" =>
-        Action.processAction(DeleteAllCompletedTasks())
+        Action.processAction(DeleteAllCompletedTasksMessage())
 
       case "5" =>
-        Action.processAction(ShowListTasks())
+        Action.processAction(ShowListConsoleMessage())
 
       case _ => println("Ошибка!!! Неверный ввод")
     }

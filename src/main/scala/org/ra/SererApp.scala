@@ -34,34 +34,34 @@ object BrowserApp extends Directives with JsonSupport {
         } ~ path("create") {
           parameter('task) { task =>
             println("!!!!!", task)
-            Action.processAction(CreateTask(Task("", s"$task", false)))
+            Action.processAction(CreateTaskMessage(Task("", s"$task", false)))
             complete(Action.showTasks())
           }
         } ~ path("delete") {
           parameter('id) { id =>
             println("id", id)
-            Action.processAction(DeleteTask(s"$id"))
+            Action.processAction(DeleteTaskMessage(s"$id"))
             Thread.sleep(1000)
             complete(Action.showTasks())
           }
         } ~ path("statuson") {
           parameter('id) { id =>
             println("id", id)
-            Action.processAction(ChangeStateTask(s"$id"))
+            Action.processAction(ChangeStatusTaskMessage(s"$id"))
             Thread.sleep(1000)
             complete(Action.showTasks())
           }
         } ~ path("statusoff") {
           parameter('id) { id =>
             println("id", id)
-            Action.processAction(ChangeStateTaskOff(s"$id"))
+            Action.processAction(ChangeStatusTaskOffMessage(s"$id"))
             Thread.sleep(1000)
             complete(Action.showTasks())
           }
         } ~ path("deleteall") {
           parameter('id) { id =>
             println("id", id)
-            Action.processAction(DeleteAllCompletedTasks())
+            Action.processAction(DeleteAllCompletedTasksMessage())
             Thread.sleep(1000)
             complete(Action.showTasks())
           }
@@ -74,7 +74,7 @@ object BrowserApp extends Directives with JsonSupport {
         } ~ path("newlist") {
           parameter('id) { id =>
             println("id", id)
-            Action.processAction(DeleteList())
+            Action.processAction(DeleteListMessage())
             Thread.sleep(1000)
             complete(Action.showTasks())
           }
