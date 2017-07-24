@@ -18,37 +18,26 @@
     font-size: 9pt; /* Размер шрифта в пунктах */
    }
 
-
-
-
   </style>
 </head>
-
 
 <hr>
 <div id="newlist"><button>Новый список</button></div>
 <p><b>Введите задачу:</b><br>
 <div id="Div1">
     <input type ="text" id="aa" />
-
 </div>
 </p>
 <hr>
 <p><b>Список задач:</b><br>
-<div id="tasks">
-
-</div>
-
-
+<div id="tasks"></div>
 </p>
 <hr>
 <div id="deleteall"><button>Удалить все выполненные</button></div>
 
-
 <script type="text/javascript">
 
 $(document).ready(function(){
-
     $.getJSON("http://localhost:9000/show", "id="+ $(this).attr('id'), function(json1){
         console.log(json1);
             <!--$('#tasks').html('');-->
@@ -71,7 +60,6 @@ $(document).ready(function(){
 
 });
 });
-
 
 $(function(){
     $('#tasks').on('click', 'input', function() {
@@ -154,8 +142,6 @@ $(function(){
              }
 
         });
-
-
         })
         });
 
@@ -186,8 +172,6 @@ $(function(){
              }
 
         });
-
-
         })
         });
 
@@ -216,8 +200,6 @@ $(function(){
              }
 
         });
-
-
         })
         });
 
@@ -250,13 +232,9 @@ $(function(){
                  + json1.tasks[i].id + ">"
                  + json1.tasks[i].body + "<Br>")}
             }
-
         });
-
         input.value = ""
-
     }
-
  });
 });
 

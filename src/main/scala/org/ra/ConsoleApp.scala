@@ -20,25 +20,6 @@ object TaskId {
     (Math.random() * 10000).round.toString
   }
 }
-//object ShowList {
-//  def showConsole(id: String, body: String, status: String): Unit =
-//    if (status == "true") println(s"$id - $body (X)")
-//    else println(s"$id - $body ( )")
-//
-//  def showBrowser(args: RichSearchResponse): TaskList = {
-//    TaskList({
-//      for {
-//        x <- args.hits
-//      } yield Task(
-//        x.sourceField("id").toString,
-//        x.sourceField("body").toString,
-//        x.sourceField("status").toString.toBoolean
-//      )
-//    }.toList)
-//
-//  }
-//
-//}
 
 //noinspection ScalaDeprecation
 object Action {
