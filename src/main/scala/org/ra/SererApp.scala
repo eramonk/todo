@@ -11,10 +11,6 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives
 import spray.json.{ DefaultJsonProtocol, RootJsonFormat }
 
-final case class Item(name: String, id: Long)
-
-final case class Order(items: List[Item])
-
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val taskFormat: RootJsonFormat[Task] = jsonFormat3(Task)
   implicit val taskListFormat: RootJsonFormat[TaskList] = jsonFormat1(TaskList)
