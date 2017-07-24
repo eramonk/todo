@@ -9,7 +9,7 @@ import akka.http.scaladsl.server.directives._
 import ContentTypeResolver.Default
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json.{ DefaultJsonProtocol, RootJsonFormat }
 
 final case class Item(name: String, id: Long)
 
@@ -29,7 +29,7 @@ object BrowserApp extends Directives with JsonSupport {
 
     val route =
       get {
-        path("index" / Segment) { name =>
+        pathSingleSlash {
           getFromFile("index.html")
         } ~ path("create") {
           parameter('task) { task =>
