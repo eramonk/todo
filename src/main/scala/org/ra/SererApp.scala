@@ -33,50 +33,38 @@ object BrowserApp extends Directives with JsonSupport {
           getFromFile("index.html")
         } ~ path("create") {
           parameter('task) { task =>
-            println("!!!!!", task)
-            Action.processAction(CreateTaskMessage(Task("", s"$task", false)))
-            complete(Action.showTasks())
+            onSuccess(WebAction.processAction(CreateTaskMessage(Task("", s"$task", false)))) { x =>
+              complete(WebAction.showTasks())
+            }
           }
         } ~ path("delete") {
           parameter('id) { id =>
-            println("id", id)
-            Action.processAction(DeleteTaskMessage(s"$id"))
-            Thread.sleep(1000)
-            complete(Action.showTasks())
+            onSuccess(WebAction.processAction(DeleteTaskMessage(s"$id"))) { x =>
+              complete(WebAction.showTasks())
+            }
           }
         } ~ path("statuson") {
           parameter('id) { id =>
-            println("id", id)
-            Action.processAction(ChangeStatusTaskMessage(s"$id"))
-            Thread.sleep(1000)
-            complete(Action.showTasks())
+            onSuccess(WebAction.processAction(ChangeStatusTaskMessage(s"$id"))) { x =>
+              complete(WebAction.showTasks())
+            }
           }
         } ~ path("statusoff") {
           parameter('id) { id =>
-            println("id", id)
-            Action.processAction(ChangeStatusTaskOffMessage(s"$id"))
-            Thread.sleep(1000)
-            complete(Action.showTasks())
+            onSuccess(WebAction.processAction(ChangeStatusTaskOffMessage(s"$id"))) { x =>
+              complete(WebAction.showTasks())
+            }
           }
         } ~ path("deleteall") {
-          parameter('id) { id =>
-            println("id", id)
-            Action.processAction(DeleteAllCompletedTasksMessage())
-            Thread.sleep(1000)
-            complete(Action.showTasks())
+          onSuccess(WebAction.processAction(DeleteAllCompletedTasksMessage())) { x =>
+            complete(WebAction.showTasks())
           }
         } ~ path("show") {
-          parameter('id) { id =>
-            println("id", id)
+          complete(WebAction.showTasks())
 
-            complete(Action.showTasks())
-          }
         } ~ path("newlist") {
-          parameter('id) { id =>
-            println("id", id)
-            Action.processAction(DeleteListMessage())
-            Thread.sleep(1000)
-            complete(Action.showTasks())
+          onSuccess(WebAction.processAction(DeleteListMessage())) { x =>
+            complete(WebAction.showTasks())
           }
         }
 

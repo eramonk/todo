@@ -1,111 +1,110 @@
 package org.ra
 
-//import scala.scalajs.js.{ Dictionary, JSApp }
-//import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
-//import org.scalajs.dom
-//import org.scalajs.dom.{ Event, html }
-//import org.scalajs.dom.raw.HTMLElement
-//
-//import scala.collection.mutable
-//import scala.scalajs.js
-//
-//@JSExport
-//object WebApp1 extends JSApp {
-//
-//  @JSExport
-//  override def main(): Unit = {
-//    dom.document.addEventListener("DOMContentLoaded", (_: Event) => {
-//      dom.document.body.outerHTML = "<body></body>"
-//      //      bootstrap(dom.document.body)
-//    })
-//  }
-//  //
-//  //  def bootstrap(root: HTMLElement): Unit = {
-//  //    println("loaded")
-//  //  }
-//
-//}
-//
-//@JSExport
-//object WebApp {
-//  @JSExport
-//  def main(div: html.Div) = {
-//
-//    val button = dom.document.getElementById("button")
-//    button.addEventListener("click", { (e: dom.Event) =>
-//
-//      var listTodo: js.Array[js.Dictionary[Any]] = js.Array()
-//      val e1 = e.asInstanceOf[dom.MouseEvent]
-//      val text = dom.document.getElementById("input").asInstanceOf[html.Input].value
-//      val temp: Dictionary[Any] = js.Dictionary("todo" -> text, "check" -> false)
-//      //      println(temp("to-do"), temp("check"))
-//
-//      var i = listTodo.length
-//      var text1 = ""
-//
-//      listTodo(i) = temp
-//      //      println(listTodo(i)("to-do"), listTodo(i)("check"))
-//      //      println(listTodo)
-//      var quest = dom.document.createElement("div")
-//      var quest1 = dom.document.createElement("div")
-//      var body1 = dom.document.getElementById("div2")
-//      text1 = listTodo(i)("todo").toString
-//
-//      val checkbox = dom.document.createElement("input")
-//      checkbox.setAttribute("type", "checkbox")
-//      quest1.textContent = text1
-//      div.appendChild(quest)
-//      quest.appendChild(quest1)
-//      quest.appendChild(checkbox)
-//
-//      //      val temp = Map("to-do" -> text, "check" -> false)
-//
-//      //      println(text)
-//
-//    })
-//
-//    //    def out(list: js.Array[js.Dictionary[Any]]): Unit = {
-//    //      for (
-//    //        i <- list;
-//    //        j <- i("to--do");
-//    //      ) yield dom.document.getElementById("div").innerHTML = i.toString + "<br>"
-//    //
-//    //    }
-//
-//    //    val child = dom.document
-//    //      .createElement("div")
-//    //
-//    //    child.id = "child"
-//    //
-//    //    child.textContent =
-//    //      "To-do list"
-//    //
-//    //    div.appendChild(child)
-//    //
-//    //    val newTodoList = dom.document
-//    //      .createElement("button")
-//    //    newTodoList.textContent = "New List"
-//    //    div.appendChild(newTodoList)
-//    //
-//    //    val newDiv = dom.document
-//    //      .createElement("div")
-//    //    div.appendChild(newDiv)
-//
-//    //        val inputNewElement = dom.document
-//    //          .createElement("input")
-//    //        inputNewElement.id = "input"
-//    //
-//    //    inputNewElement.setAttribute("placeholder", "new quest")
-//    //
-//    //    val enterButton = dom.document
-//    //      .createElement("button")
-//    //    enterButton.textContent = "Enter"
-//    //
-//    //        div.appendChild(inputNewElement)
-//    //    newDiv.appendChild(enterButton)
-//    //
-//    //    val text = dom.document.getElementById("input").asInstanceOf[html.Input].value
-//
-//  } //        ShowListTasks.show(todo)
-//  //        cycle()
-//}
+import com.sksamuel.elastic4s.{ ElasticClient, ElasticsearchClientUri, TcpClient }
+import com.sksamuel.elastic4s.searches.RichSearchResponse
+import org.elasticsearch.action.delete.DeleteResponse
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy
+
+import scala.collection.mutable.ArrayOps
+import scala.concurrent.Future
+
+object WebAction {
+
+  import com.sksamuel.elastic4s.ElasticDsl._
+  import scala.concurrent.ExecutionContext.Implicits.global
+
+  val client: ElasticClient = TcpClient.transport(ElasticsearchClientUri("localhost", 9300))
+
+  def showTasks(): TaskList = {
+
+    val result = client.execute {
+      search("todotest2" / "list")
+    }.await
+
+    showBrowser(result)
+
+  }
+
+  def showBrowser(args: RichSearchResponse): TaskList = {
+    TaskList({
+      for {
+        x <- args.hits
+      } yield Task(
+        x.sourceField("id").toString,
+        x.sourceField("body").toString,
+        x.sourceField("status").toString.toBoolean
+      )
+    }.toList)
+
+  }
+
+  def processAction(task: TaskAction) = task match {
+
+    case CreateTaskMessage(task) =>
+      client.execute {
+        bulk(
+          indexInto("todotest2" / "list").fields("id" -> TaskId.getId, "body" -> task.body, "status" -> task.status.toString)
+        ).refresh(RefreshPolicy.WAIT_UNTIL)
+      }
+
+    case DeleteTaskMessage(id) =>
+
+      client.execute {
+        search("todotest2").matchQuery("id", id)
+      }.flatMap { result =>
+        client.execute {
+          delete(result.hits.head.id) from "todotest2" / "list" refresh RefreshPolicy.WAIT_UNTIL
+        }
+      }
+
+    case ChangeStatusTaskMessage(id) =>
+
+      client.execute {
+        search("todotest2").matchQuery("id", id)
+      }.flatMap { result =>
+        client.execute {
+          update(result.hits.head.id).in("todotest2" / "list")
+            .doc("status" -> "true") refresh RefreshPolicy.WAIT_UNTIL
+        }
+      }
+
+    case ChangeStatusTaskOffMessage(id) =>
+
+      client.execute {
+        search("todotest2").matchQuery("id", id)
+      }.flatMap { result =>
+        client.execute {
+          update(result.hits.head.id).in("todotest2" / "list")
+            .doc("status" -> "false") refresh RefreshPolicy.WAIT_UNTIL
+        }
+      }
+
+    case DeleteAllCompletedTasksMessage() =>
+
+      client.execute {
+        search("todotest2").matchQuery("status", "true")
+      }.map(y => y.hits.map(z =>
+        client.execute {
+          delete(z.id) from "todotest2" / "list" refresh RefreshPolicy.WAIT_UNTIL
+        }))
+        .flatMap(x => Future.sequence(x.toList))
+
+    case DeleteListMessage() =>
+
+      client.execute {
+        search("todotest2")
+      }.map(y => y.hits.map(z =>
+        client.execute {
+          delete(z.id) from "todotest2" / "list" refresh RefreshPolicy.WAIT_UNTIL
+        }))
+        .flatMap(x => Future.sequence(x.toList))
+
+    case ShowListBrowserMessage() =>
+      val result = client.execute {
+        search("todotest2" / "list")
+      }.await
+
+      Future(showBrowser(result))
+
+  }
+}

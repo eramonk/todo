@@ -20,25 +20,25 @@ object TaskId {
     (Math.random() * 10000).round.toString
   }
 }
-object ShowList {
-  def showConsole(id: String, body: String, status: String): Unit =
-    if (status == "true") println(s"$id - $body (X)")
-    else println(s"$id - $body ( )")
-
-  def showBrowser(args: RichSearchResponse): TaskList = {
-    TaskList({
-      for {
-        x <- args.hits
-      } yield Task(
-        x.sourceField("id").toString,
-        x.sourceField("body").toString,
-        x.sourceField("status").toString.toBoolean
-      )
-    }.toList)
-
-  }
-
-}
+//object ShowList {
+//  def showConsole(id: String, body: String, status: String): Unit =
+//    if (status == "true") println(s"$id - $body (X)")
+//    else println(s"$id - $body ( )")
+//
+//  def showBrowser(args: RichSearchResponse): TaskList = {
+//    TaskList({
+//      for {
+//        x <- args.hits
+//      } yield Task(
+//        x.sourceField("id").toString,
+//        x.sourceField("body").toString,
+//        x.sourceField("status").toString.toBoolean
+//      )
+//    }.toList)
+//
+//  }
+//
+//}
 
 //noinspection ScalaDeprecation
 object Action {
@@ -47,15 +47,9 @@ object Action {
 
   val client: ElasticClient = TcpClient.transport(ElasticsearchClientUri("localhost", 9300))
 
-  def showTasks(): TaskList = {
-
-    val result = client.execute {
-      search("todotest2" / "list")
-    }.await
-
-    ShowList.showBrowser(result)
-
-  }
+  def showConsole(id: String, body: String, status: String): Unit =
+    if (status == "true") println(s"$id - $body (X)")
+    else println(s"$id - $body ( )")
 
   def processAction(task: TaskAction): Any = task match {
 
@@ -135,19 +129,11 @@ object Action {
       result
         .hits
         .foreach(x =>
-          ShowList.showConsole(
+          showConsole(
             x.sourceField("id").toString,
             x.sourceField("body").toString,
             x.sourceField("status").toString
           ))
-
-    case ShowListBrowserMessage() =>
-      val result = client.execute {
-        search("todotest2" / "list")
-      }.await
-
-      ShowList.showBrowser(result)
-
   }
 
   def consoleMenu(): Unit = {
@@ -173,7 +159,7 @@ object Action {
       case "1" =>
         println("Введите задачу")
         val input = scala.io.StdIn.readLine()
-        val task = Task(TaskId.getId, input, false)
+        val task = Task(TaskId.getId, input, status = false)
         Action.processAction(CreateTaskMessage(task))
       case "2" =>
         println("Введите номер задачи")
@@ -200,7 +186,7 @@ object Action {
   }
 }
 
-object ConsolApp extends App {
+object ConsoleApp extends App {
   Action.cycle()
 }
 
