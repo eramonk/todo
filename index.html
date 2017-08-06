@@ -43,13 +43,13 @@ $(document).ready(function(){
             <!--$('#tasks').html('');-->
              $('#tasks').empty()
             for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -71,13 +71,13 @@ $(function(){
             <!--$('#tasks').html('');-->
              $('#tasks').empty()
             for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -96,13 +96,13 @@ $(function(){
             console.log("delete");
              $('#tasks').empty()
             for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true") {
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed") {
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -126,13 +126,13 @@ $(function(){
             console.log("delete");
              $('#tasks').empty()
              for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -156,13 +156,13 @@ $(function(){
             console.log("delete");
              $('#tasks').empty()
              for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -184,13 +184,13 @@ $(function(){
             console.log("delete");
              $('#tasks').empty()
              for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
@@ -218,13 +218,13 @@ $(function(){
             console.log(json1.tasks[0].status);
              $('#tasks').empty()
              for(var i = 0; i < json1.tasks.length; ++i) {
-                if ("" + json1.tasks[i].status == "false"){
+                if ("" + json1.tasks[i].status == "opened"){
                 console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"
                  + "<input type='checkbox' id="
                  + json1.tasks[i].id + ">"
-                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "true"){
+                 + json1.tasks[i].body + "<Br>")} else if ("" + json1.tasks[i].status == "closed"){
                  console.log(json1.tasks[i].status)
                  $('#tasks').append("<button class=b1 id="
                  + json1.tasks[i].id + ">X</button>"

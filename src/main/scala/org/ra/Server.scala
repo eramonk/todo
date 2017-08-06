@@ -16,7 +16,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val taskListFormat: RootJsonFormat[TaskList] = jsonFormat1(TaskList)
 }
 
-object BrowserApp extends Directives with JsonSupport {
+object Server extends Directives with JsonSupport {
   def main(args: Array[String]) {
 
     implicit val system = ActorSystem("my-system")
@@ -29,7 +29,7 @@ object BrowserApp extends Directives with JsonSupport {
           getFromFile("index.html")
         } ~ path("create") {
           parameter('task) { task =>
-            onSuccess(WebAction.processAction(CreateTaskMessage(Task("", s"$task", false)))) { x =>
+            onSuccess(WebAction.processAction(CreateTaskMessage(Task("", s"$task", "opened")))) { x =>
               complete(WebAction.showTasks())
             }
           }
