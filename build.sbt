@@ -37,7 +37,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "org.ra.build"
   )
 
-dockerAutoPackageJavaApplication(fromImage = "java:8", exposedPorts = Seq(9000))
+dockerAutoPackageJavaApplication(fromImage = "java:8", exposedPorts = Seq(9001))
 
 git.useGitDescribe := true
 
